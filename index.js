@@ -9,6 +9,12 @@ const MongoUtil = require('./MongoUtil');
 let app = express();
 app.set('view engine', 'hbs');
 
+// http server
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
 // Inform Express where to find static images, css and
 // client-side (ie. browser)
 app.use(express.static('public'))
@@ -45,11 +51,26 @@ async function main() {
             _id: result.insertedId
         });
     })
+
+    app.get('/chat', async function(req,res){
+        const db = await MongoUtil.getDB();
+        const messages = await db.collection('messages').find({}).toArray();
+        res.send(messages);
+    })
 }
 
 main();
 
-// START SERVER
-app.listen(3000, function (req, res) {
-    console.log("Server started")
+io.on('connection', (user)=>{
+    console.log("User has connected");
+    console.log(user);
 })
+
+// // START SERVER
+// app.listen(3000, function (req, res) {
+//     console.log("Server started")
+// })
+
+server.listen(3000, () => {
+  console.log('server is running on port', server.address().port);
+});
