@@ -43,16 +43,21 @@
         const r = await axios.post('/chat', {
           'name': document.querySelector('#name').value,
           'message': document.querySelector('#message').value
-        })
-        document.querySelector("#all_messages").innerHTML += `<div class="card">
+        })      
+      })
+
+      // event handling when messages are received:
+      socket.on('message', (msg)=>{
+          document.querySelector("#all_messages").innerHTML += `<div class="card">
             <div class="card-body mt-3">
-              <div class="card-title">${r.data.name}</div>
+              <div class="card-title">${msg.name}</div>
               <div>
-                ${r.data.message}
+                ${msg.message}
               </div>
             </div>
           </div>`
       })
+
     </script>
   </body>
 </html>

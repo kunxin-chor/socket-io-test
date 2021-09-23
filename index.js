@@ -46,10 +46,10 @@ async function main() {
             'message': req.body.message
         }
         const result = await db.collection('messages').insertOne(message)
-        res.send({
-            ...message,
-            _id: result.insertedId
-        });
+
+        io.emit('message', {...message, _id:result.insertedId});
+
+        res.sendStatus(200);
     })
 
     app.get('/chat', async function(req,res){
